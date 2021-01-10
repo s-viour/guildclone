@@ -49,6 +49,9 @@ class CommandErrorHandler(commands.Cog):
             if ctx.command.qualified_name == 'tag list':
                 await ctx.send('I could not find that member. Please try again.')
 
+        elif isinstance(error, commands.UserInputError):
+            await ctx.send(f'Error in command input: {error}')
+
         else:
             print('Ignoring exception in command {}:'.format(ctx.command), file=sys.stderr)
             traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)

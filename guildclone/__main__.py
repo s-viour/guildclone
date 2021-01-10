@@ -15,6 +15,6 @@ if __name__ == "__main__":
 	prefix = os.environ.get('BOT_PREFIX') or ';'
 
 	bot = commands.Bot(prefix)
-	bot.add_cog(core.Cog(bot))
 	bot.add_cog(errorhandler.CommandErrorHandler(bot))
+	bot.add_cog(core.Cog(bot))
 	bot.run(token)
