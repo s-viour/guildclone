@@ -1,6 +1,7 @@
 import logging
 import discord
 from discord.ext import commands
+from util import GuildMapping
 
 
 logger = logging.getLogger('guildclone')
@@ -45,6 +46,10 @@ def convert_overwrites(overwrites, role_mapping):
 
 
 async def clone_server_channels(dstguild, srcguild, role_mapping):
+	"""clones the channels of srcguild into dstguild.
+	returns a mapping of the source guild's chanenls
+	to the corresponding channel in the destination server."""
+	mapping = {}
 	categories = {}
 	for channel in srcguild.channels:
 		if type(channel) == discord.CategoryChannel:
@@ -55,6 +60,7 @@ async def clone_server_channels(dstguild, srcguild, role_mapping):
 				position=channel.position
 			)
 			categories[channel.id] = ctg
+			mapping[channel] = ctg
 
 	for channel in srcguild.channels:
 		overwrites = convert_overwrites(channel.overwrites, role_mapping)
@@ -66,6 +72,7 @@ async def clone_server_channels(dstguild, srcguild, role_mapping):
 				position=channel.position,
 				category=categories[channel.category.id]
 			)
+			mapping[channel] = ch
 		elif type(channel) == discord.VoiceChannel:
 			logger.info(f'creating voice channel {channel}')
 			ch = await dstguild.create_voice_channel(
@@ -74,10 +81,21 @@ async def clone_server_channels(dstguild, srcguild, role_mapping):
 				position=channel.position,
 				category=categories[channel.category.id]
 			)
+			mapping[channel] = ch
+
+	return mapping
+
 
 class Cog(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
+		self.mappings = []
+
+	def get_mapping(self, srv1, srv2):
+		for m in self.mappings:
+			if m.contains(srv1, srv2):
+				return m
+		return None
 
 	@commands.command()
 	async def clone(self, ctx, gid: int):
@@ -90,8 +108,10 @@ class Cog(commands.Cog):
 			)
 
 
-		mapping = await clone_server_roles(dstguild, srcguild)
-		await clone_server_channels(dstguild, srcguild, mapping)
+		roles = await clone_server_roles(dstguild, srcguild)
+		channels = await clone_server_channels(dstguild, srcguild, roles)
+		self.mappings.append(GuildMapping(srcguild, dstguild, roles, channels))
+		logger.debug(f'mappings consists of: {self.mappings}')
 
 
 
