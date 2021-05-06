@@ -1,4 +1,4 @@
 from .core import *
-from .errorhandler import CommandErrorHandler
+from .util import GuildMapping
 
-__all__ = ['core', 'errorhandler']
+__all__ = ['core', 'util']
