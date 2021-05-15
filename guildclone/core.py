@@ -1,7 +1,7 @@
 import logging
 import discord
 from discord.ext import commands
-from util import GuildMapping
+from .util import GuildMapping
 
 
 logger = logging.getLogger('guildclone')

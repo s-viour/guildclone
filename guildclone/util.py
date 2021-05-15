@@ -1,6 +1,7 @@
 import discord
 import traceback
 import sys
+import logging
 from discord.ext import commands
 
 
@@ -66,8 +67,10 @@ class GuildMapping:
         self.channel_mapping = channel_mapping
         self.srcguild = src
         self.dstguild = dst
-        logger.debug('mapping created:')
-        logger.debug(f'srcguild: {self.srcguild.id} dstguild: {self.dstguild.id}')
+        # TODO: let this class have a logger or something
+        # i think there was meant to be a logger variable here?
+        logging.debug('mapping created:')
+        logging.debug(f'srcguild: {self.srcguild.id} dstguild: {self.dstguild.id}')
 
     @property
     def src(self):
