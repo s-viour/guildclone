@@ -2,9 +2,7 @@ import os
 import sys
 import logging
 from discord.ext import commands
-import core
-import util
-
+from guildclone import core, util
 
 if __name__ == "__main__":
 	log_level = os.environ.get('GUILDCLONE_LOGLEVEL', 'INFO').upper()
